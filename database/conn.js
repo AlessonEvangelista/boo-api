@@ -9,7 +9,6 @@ const connect =  async() => {
     const mongoUri = mServer.getUri();
 
     database = await mongoose.connect(mongoUri, { dbName: "testingDb"}); 
-    console.log(`Connected to ${mongoUri}`);
 }
 
 export{
