@@ -1,32 +1,36 @@
-'use strict';
+import express, { response } from 'express';
+import { database } from '../database/conn.js';
+import profileModel from '../models/profile.model.js';
+import { nextId } from '../models/sequential.model.js';
 
-const express = require('express');
-const router = express.Router();
 
-const profiles = [
-  {
-    "id": 1,
-    "name": "A Martinez",
-    "description": "Adolph Larrue Martinez III.",
-    "mbti": "ISFJ",
-    "enneagram": "9w3",
-    "variant": "sp/so",
-    "tritype": 725,
-    "socionics": "SEE",
-    "sloan": "RCOEN",
-    "psyche": "FEVL",
-    "image": "https://soulverse.boo.world/images/1.png",
-  }
-];
+export const profileRoutes = express.Router();
 
-module.exports = function() {
+profileRoutes.get('/profile/:id', async (req, res, next) => {
+  
+  const profile = await profileModel.findOne({id: req.params.id})
 
-  router.get('/*', function(req, res, next) {
+  if(profile) {
     res.render('profile_template', {
-      profile: profiles[0],
+      profile
     });
-  });
+  } else {
+    res.end('Error 404');
+  }
+});
 
-  return router;
-}
-
+profileRoutes.post('/api/profile', async function(req, res) {  
+  try {
+    const id = await nextId('profile');
+    const profile = new profileModel({
+      ...req.body,
+      id
+    })
+    
+    const newProfile = await profile.save();
+    return res.json(newProfile)
+  } catch (error) {
+    res.status(500);
+    res.json({msg:"Invalid Request", error});
+  }
+});
