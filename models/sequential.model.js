@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { database } from '../database/conn.js';
 
 const sequentialSquema = new mongoose.Schema({
     type : { type: String },

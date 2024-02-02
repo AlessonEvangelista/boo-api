@@ -1,12 +1,11 @@
 import express, { response } from 'express';
-import { database } from '../database/conn.js';
 
 import profileModel from '../models/profile.model.js';
 import commentModel from '../models/comment.model.js';
 
 export const commentRoutes = express.Router();
 
-commentRoutes.get('/api/comments/:profileId', async (req, res) => {
+commentRoutes.get('/:profileId', async (req, res) => {
   
   const { sort, filter = {} } = req.query;
   const findOptions = {profileId: req.params.profileId};
@@ -33,7 +32,7 @@ commentRoutes.get('/api/comments/:profileId', async (req, res) => {
   res.json(comments);
 });
 
-commentRoutes.post('/api/comments', async function(req, res) {  
+commentRoutes.post('/', async function(req, res) {  
   try {
     const profile = await profileModel.findOne({id: req.body.userId})
 
@@ -55,7 +54,7 @@ commentRoutes.post('/api/comments', async function(req, res) {
   }
 });
 
-commentRoutes.post('/api/comments/like', async function(req, res) {  
+commentRoutes.post('/like', async function(req, res) {  
     try {
         const comment = await commentModel.findOne({_id: req.body.commentId});
 
@@ -70,7 +69,7 @@ commentRoutes.post('/api/comments/like', async function(req, res) {
     }
 });
 
-commentRoutes.post('/api/comments/unlike', async function(req, res) {  
+commentRoutes.post('/unlike', async function(req, res) {  
     try {
         const comment = await commentModel.findOne({_id: req.body.commentId});
 

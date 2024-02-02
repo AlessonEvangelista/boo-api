@@ -1,25 +1,21 @@
-import express, { response } from 'express';
-import { database } from '../database/conn.js';
+import express from 'express';
 import profileModel from '../models/profile.model.js';
 import { nextId } from '../models/sequential.model.js';
 
-
 export const profileRoutes = express.Router();
 
-profileRoutes.get('/profile/:id', async (req, res, next) => {
-  
-  const profile = await profileModel.findOne({id: req.params.id})
-
-  if(profile) {
-    res.render('profile_template', {
-      profile
-    });
+profileRoutes.get('/?:id?', async (req, res, next) => {
+  let profile = {};
+  if(req.params.id !== undefined) {
+    profile = await profileModel.findOne({id: req.params.id})
   } else {
-    res.end('Error 404');
+    profile = await profileModel.find({});
   }
+
+  return res.json(profile);
 });
 
-profileRoutes.post('/api/profile', async function(req, res) {  
+profileRoutes.post('/', async function(req, res) {  
   try {
     const id = await nextId('profile');
     const profile = new profileModel({
